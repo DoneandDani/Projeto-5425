@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS linha (
 );
 
 CREATE TABLE IF NOT EXISTS indicador(
-    id_indicador INTEGER PRIMARY KEY AUTOINCREMENT
+    id_indicador INTEGER PRIMARY KEY AUTOINCREMENT,
     nome TEXT NOT NULL UNIQUE,
     unidade TEXT NOT NULL,
     descricao TEXT 
@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS valor_indicador(
     ano INTEGER NOT NULL CHECK (ano BETWEEN 2000 AND 2030),
     valor REAL,
     UNIQUE (id_indicador, id_linha, ano)
-),
+);
 
 CREATE UNIQUE INDEX IF NOT EXISTS ux_valor_total
     ON valor_indicador(id_indicador,ano)

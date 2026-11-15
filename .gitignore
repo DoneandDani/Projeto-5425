@@ -1,6 +1,13 @@
-_pycache__/
-*.pyc
-.venv/
+__pycache__/
 .pytest_cache/
-.env
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
 data/*.db
+data/*.db-*
+data/*.sqlite
+data/*.sqlite3
+
+
