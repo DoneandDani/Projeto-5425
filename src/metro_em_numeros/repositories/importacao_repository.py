@@ -36,7 +36,7 @@ class ImportacaoRepository:
         linha= self.conn.execute( f"SELECT {_COLUNAS} FROM importacao ORDER BY id_importacao DESC LIMIT 1").fetchone()
         return None if linha is None else _for_object(linha)
 
-    def save(self, importacao: Importacao) -> Importacao:
+    def make_save(self, importacao: Importacao) -> Importacao:
         
         """ Para um INSERT sem commit. Devolve a importação com o id e data."""
         try:
