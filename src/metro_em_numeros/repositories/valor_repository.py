@@ -31,9 +31,9 @@ class ValorRepository:
         Devido a forma como escolhi gravar o total de cada linha, o indicador e a linha tem sempre de exisitr (KeyError se não existirem).
         
         """
-        ids_indicador = { r["codigo"]: r["id_linha"] for r in self.conn.execute("SELECT id_indicador, nome FROM indicador")}
+        ids_indicador = { r["nome"]: r["id_indicador"] for r in self.conn.execute("SELECT id_indicador, nome FROM indicador")}
 
-        ids_linha = {r["codigo"] : r["id_indicador"] for r in self.conn.execute("SELECT id_linha, codigo FROM linha")}
+        ids_linha = {r["codigo"] : r["id_linha"] for r in self.conn.execute("SELECT id_linha, codigo FROM linha")}
 
         self.conn.executemany(
             """

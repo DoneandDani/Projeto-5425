@@ -5,6 +5,7 @@ __pycache__/
 build/
 dist/
 .venv/
+.venv_old
 data/*.db
 data/*.db-*
 data/*.sqlite

@@ -57,7 +57,7 @@ class ImportacaoService:
 
 
         valores = read_csv(caminho)
-        self._verificar_conflitos(valores)
+        self._verify_conflicts(valores)
 
         importacao = Importacao(
 
@@ -83,7 +83,7 @@ class ImportacaoService:
     def _verify_conflicts(self, valores: List[ValorIndicador]) -> None:
         
         existentes = self.valores.existing_keys()
-        conflitos = [v for v in valores if v.chave in existentes]
+        conflitos = [v for v in valores if v.key in existentes]
         
         if conflitos:
             indicador, linha, ano = conflitos[0].key

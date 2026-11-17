@@ -45,7 +45,7 @@ class Linha:
         return cls(codigo=codigo, nome=f"Linha {m.group(1)}")
 
 
-dataclass(frozen=True)
+@dataclass(frozen=True)
 class Indicador:
     nome: str
     unidade: str
@@ -63,7 +63,6 @@ class Indicador:
         return cls(nome=nome, unidade=UNIDADES_INDICADORES[nome])
 
 @dataclass(frozen=True)
-
 class ValorIndicador:
 
     """Classe com o valor anual de um dado indicador para uma linha ou para o total da rede
@@ -90,7 +89,7 @@ class ValorIndicador:
     @property
     def key(self) ->Tuple[str, Optional[str], int]:
         
-        return ( self.indicador.nome, self.linha.codigo if self.self.linha else None, self.ano,)
+        return ( self.indicador.nome, self.linha.codigo if self.linha else None, self.ano,)
 
 
 @dataclass(frozen=True)
@@ -103,7 +102,7 @@ class Importacao:
     data_importacao: Optional[str] = None
 
     def __post_init__(self):
-        if not self.nome_ficheiro.strip:
+        if not self.nome_ficheiro.strip():
             raise InvalidData("Nome do ficheiro obrigatório.")
         if not _RE_HASH.fullmatch(self.hash_sha256):
             raise InvalidData("Hash SHA-256 deve ter 64 caracateres hexadecimais.")

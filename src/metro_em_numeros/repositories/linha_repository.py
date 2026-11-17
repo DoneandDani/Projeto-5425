@@ -12,7 +12,7 @@ MODO_PADRAO = "Metro"
 
 
 class LinhaRepository:
-    def __innit__(self,conn:sqlite3.Connection):
+    def __init__(self,conn:sqlite3.Connection):
         self.conn =conn
 
     def make_sure(self, linha:Linha, modo:str =MODO_PADRAO) -> None:

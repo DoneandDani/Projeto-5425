@@ -92,7 +92,7 @@ def read_csv(caminho) -> List[ValorIndicador]:
                 try:
                     linha=Linha.from_the_code(nome)
                 except InvalidData:
-                    erros.append(f"linha {n}: indicador/linha desconhecida '{nome}'.")
+                    erros.append(f"linha {n}: indicador/linha desconhecido '{nome}'.")
                     continue
                 if indicador_atual is None:
                     erros.append( f"linha {n}: {nome} aparece antes de qualquer indicador.")

@@ -8,7 +8,7 @@ from typing import Optional
 from metro_em_numeros.domain.erros import RepeatedImport
 from metro_em_numeros.domain.modelos import Importacao
 
-_COLUNAS = ("id_importacao, nome_ficheiro, hash_shad246, fonte,"
+_COLUNAS = ("id_importacao, nome_ficheiro, hash_sha256, fonte,"
             "num_registos, data_importacao"
             )
 
