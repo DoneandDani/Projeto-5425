@@ -1,0 +1,52 @@
+
+{% extends "base.html" %}
+{% block conteudo %}
+<h2>Metro do Porto: rede, oferta e procura</h2>
+
+{% if not tabelas %}
+<p class="aviso">
+  Ainda não existem dados importados.
+  Execute <code>python scripts/importar_csv.py</code> e recarregue a página.
+</p>
+{% else %}
+<p class="meta">
+  Período: {{ periodo }} ·
+  Valores em milhares (10³), salvo indicação em contrário ·
+  Fonte: {{ ultima_importacao.fonte }} ·
+  Ficheiro: {{ ultima_importacao.nome_ficheiro }}
+  (importado em {{ ultima_importacao.data_importacao }} UTC)
+</p>
+
+{% for t in tabelas %}
+<div class="tabela-wrap">
+  <table>
+    <caption>{{ t.indicador }} <small>({{ t.unidade }})</small></caption>
+    <thead>
+      <tr>
+        <th scope="col">Linha</th>
+        {% for ano in t.anos %}
+        <th scope="col" class="num">{{ ano }}</th>
+        {% endfor %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for l in t.linhas %}
+      <tr{% if l.e_total %} class="total"{% endif %}>
+        <th scope="row">{{ l.nome }}</th>
+        {% for v in l.valores %}
+        <td class="num">{{ v }}</td>
+        {% endfor %}
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endfor %}
+
+<p class="nota">
+  «—» significa que a fonte não tem dados (não é o mesmo que zero).
+  O total da rede é o valor publicado na fonte e pode não coincidir com a
+  soma das linhas (por exemplo, o Investimento exclui a linha G).
+</p>
+{% endif %}
+{% endblock %}

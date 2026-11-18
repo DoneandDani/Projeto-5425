@@ -1,0 +1,27 @@
+
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
+  <title>Metro em Números</title>
+  <link
+    rel="stylesheet"
+    href="{{ url_for('static', path='/css/style.css') }}"
+  >
+</head>
+<body>
+  <header>
+    <h1>Metro em Números</h1>
+    <nav>
+      <a href="/">Indicadores</a>
+    </nav>
+  </header>
+  <main>
+    {% block conteudo %}{% endblock %}
+  </main>
+</body>
+</html>

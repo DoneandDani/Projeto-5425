@@ -23,7 +23,11 @@ dev = [
 where = ["src"]
 
 [tool.setuptools.package-data]
-metro_em_numeros = ["templates/*.html"]
+metro_em_numeros = [
+    "templates/*.html",
+    "templates/indicadores/*.html",
+    "static/css/*.css",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -1,0 +1,29 @@
+body {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px;
+  font-family: Arial, sans-serif;
+  line-height: 1.5;
+  color: #222;
+}
+header {
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+}
+nav a { margin-right: 16px; }
+.tabela-wrap { overflow-x: auto; margin-bottom: 32px; }
+table { width: 100%; border-collapse: collapse; }
+caption { text-align: left; font-weight: bold; padding: 8px 0; }
+caption small { font-weight: normal; color: #555; }
+th, td {
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  text-align: left;
+  white-space: nowrap;
+}
+th.num, td.num { text-align: right; }
+thead th { background: #eef2e6; }
+tr.total th, tr.total td { background: #f4f4f4; font-weight: bold; }
+.meta, .nota { color: #555; font-size: 0.9rem; }
+.aviso { background: #fff7e0; border: 1px solid #e6c866; padding: 12px; }
