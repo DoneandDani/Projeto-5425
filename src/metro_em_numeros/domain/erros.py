@@ -12,3 +12,13 @@ class InvalidImport(Exception):
 
 class RepeatedImport(Exception):
     """Repetição da importação do ficheiro."""
+
+
+class DoubleRegistry(Exception):
+    """Já existe um registo com o mesmo valor único."""
+
+class RegistryInUse(Exception):
+    """Ooutros registos dependem do registo pedido."""
+
+class RegistryNotFound(Exception):
+    """Registo pedido não existe."""

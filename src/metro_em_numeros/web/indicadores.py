@@ -8,6 +8,7 @@ from fastapi.templating import Jinja2Templates
 
 from metro_em_numeros.database import connect
 from metro_em_numeros.services.consulta_service import ConsultaService
+from metro_em_numeros.web.comum import open_connection, templates
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
@@ -18,18 +19,9 @@ def build_service(conn) -> ConsultaService:
     return ConsultaService(conn)
 
 @router.get("/")
-def page_indicators(request: Request):
-    
-    conn = connect(request.app.state.db_path)
-    
-    try:
-        contexto = build_service(conn).get_tables()
-    finally:
-        conn.close()
-    
+def pagina_indicadores(request: Request):
+    with open_connection(request) as conn:
+        contexto = ConsultaService(conn).get_tables()
     return templates.TemplateResponse(
-        request = request,
-        name = "indicadores/lista.html",
-        context=contexto,
-    
+        request=request, name="indicadores/lista.html", context=contexto
     )

@@ -23,27 +23,47 @@ UNIDADES_INDICADORES = {
     "Passageiros-Km": "10^3 passageiros-Km"
 }
 
-_RE_CODIGO_LINHA= re.compile(r"MP - ([A-G])")
 _RE_HASH=re.compile(r"[0-9a-f]{64}")
 
 @dataclass(frozen=True)
-class Linha:
-    codigo: str
+class ModoTransporte:
     nome: str
+    descricao: Optional[str] = None
+    id: Optional[int] = None  # None antes de guardar
 
     def __post_init__(self):
-        if not _RE_CODIGO_LINHA.fullmatch(self.codigo):
-            raise InvalidData(f"Código da linnha inválido: '{self.codigo}.")
-        if not self.nome.strip():
-            raise InvalidData(f"Nome da linha obrigatório.")
+        nome = " ".join(self.nome.split())
+        descricao = (self.descricao or "").strip() or None
+        if not nome:
+            raise InvalidData("O nome do modo de transporte é obrigatório.")
+        if len(nome) > 100:
+            raise InvalidData("O nome do modo de transporte não pode exceder 100 caracteres.")
+        if descricao is not None and len(descricao) > 255:
+            raise InvalidData("A descrição não pode exceder 255 caracteres.")
+        object.__setattr__(self, "nome", nome)
+        object.__setattr__(self, "descricao", descricao)
 
-    @classmethod
-    def from_the_code(cls, codigo: str) -> "Linha":
-        m = _RE_CODIGO_LINHA.fullmatch(codigo)
-        if not m:
-            raise InvalidData(f"Código da linnha inválido: '{codigo}.")
-        return cls(codigo=codigo, nome=f"Linha {m.group(1)}")
 
+@dataclass(frozen=True)
+class Linha:
+    codigo: str  # ex.: 'MP - A'
+    nome: str    # ex.: 'Linha A'
+    id: Optional[int] = None
+    id_modo: Optional[int] = None
+
+    def __post_init__(self):
+        codigo = self.codigo.strip()
+        nome = " ".join(self.nome.split())
+        if not codigo:
+            raise InvalidData("O código da linha é obrigatório.")
+        if len(codigo) > 20:
+            raise InvalidData("O código da linha não pode exceder 20 caracteres.")
+        if not nome:
+            raise InvalidData("O nome da linha é obrigatório.")
+        if len(nome) > 100:
+            raise InvalidData("O nome da linha não pode exceder 100 caracteres.")
+        object.__setattr__(self, "codigo", codigo)
+        object.__setattr__(self, "nome", nome)
 
 @dataclass(frozen=True)
 class Indicador:
