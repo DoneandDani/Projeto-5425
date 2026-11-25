@@ -27,3 +27,17 @@ thead th { background: #eef2e6; }
 tr.total th, tr.total td { background: #f4f4f4; font-weight: bold; }
 .meta, .nota { color: #555; font-size: 0.9rem; }
 .aviso { background: #fff7e0; border: 1px solid #e6c866; padding: 12px; }
+
+nav a { margin-right: 14px; }
+form div { margin-bottom: 16px; }
+label { display: block; margin-bottom: 4px; }
+input, select { box-sizing: border-box; width: 100%; max-width: 420px; padding: 8px; }
+input[type="range"] { max-width: 320px; padding: 0; }
+button { padding: 8px 16px; }
+form.inline { display: inline; margin-left: 8px; }
+form.inline button { padding: 2px 8px; }
+form.cenario { margin-bottom: 24px; }
+.erro { color: #8b0000; background: #ffecec; padding: 12px; }
+.sucesso { color: #14532d; background: #e8f6ec; padding: 12px; }
+.grafico { position: relative; max-width: 960px; height: 460px; }
+.fatores li { margin-bottom: 8px; }
