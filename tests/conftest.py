@@ -4,6 +4,8 @@ from pathlib import Path
 import pytest
 
 from metro_em_numeros.database import initialize, connect
+from metro_em_numeros.services.importacao_service import ImportacaoService
+
 
 RAIZ = Path(__file__).resolve().parent.parent
 
@@ -62,5 +64,11 @@ def count_lines(conn):
     return _count_lines
 
 
+@pytest.fixture
+def conn_with_data(conn, csv_real):
+    """Ligação a uma base de dados onde o CSV real já foi importado."""
+    
+    ImportacaoService(conn).importar(csv_real)
+    return conn
 
 

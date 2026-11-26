@@ -34,6 +34,7 @@ from metro_em_numeros.domain.modelos import (
 )
 
 _RE_ANO = re.compile(r"\d{4}")
+_RE_LINHA = re.compile(r"MP - ([A-G])")  
 
 def _convert_value (texto:str) -> Optional[float]:
     texto =texto.strip()
@@ -50,89 +51,96 @@ def read_csv(caminho) -> List[ValorIndicador]:
     valores : List [ValorIndicador] = []
     vistos: Set[Tuple] = set()
 
-    with open(Path(caminho), newline="", encoding="utf-8-sig") as ficheiro:
-        leitor = csv.reader(ficheiro)
+    try:
+        with open(Path(caminho), newline="", encoding="utf-8-sig") as ficheiro:
+            leitor = csv.reader(ficheiro)
 
-        try:
-            cabecalho= next(leitor)
-        except StopIteration:
-            raise InvalidImport(["Ficheiro vazio."])
+            try:
+                cabecalho= next(leitor)
+            except StopIteration:
+                raise InvalidImport(["Ficheiro vazio."])
 
-        if not cabecalho or not cabecalho[0].strip().startswith("Indicador"):
-            raise InvalidImport( ["Cabeçaloh inváldido a primeira coluna deve ser 'Indicador'."])
+            if not cabecalho or not cabecalho[0].strip().startswith("Indicador"):
+                raise InvalidImport( ["Cabeçaloh inválido, a primeira coluna deve ser 'Indicador'."])
 
-        colunas_ano= [
-            (i, int(c.strip()))
-            for i, c in enumerate(cabecalho)
-            if _RE_ANO.fullmatch(c.strip())
-        ]
+            colunas_ano= [
+                (i, int(c.strip()))
+                for i, c in enumerate(cabecalho)
+                if _RE_ANO.fullmatch(c.strip())
+            ]
 
-        if not colunas_ano:
-            raise InvalidImport(["Cabeçalho inválido: não foram encontradas colunas de ano."])
+            if not colunas_ano:
+                raise InvalidImport(["Cabeçalho inválido: não foram encontradas colunas de ano."])
 
-        fora =[ano for _, ano in colunas_ano if not (ANO_MIN<= ano<=ANO_MAX)]
-        if fora:
-            raise InvalidImport([f"Cabeçalho inválido: ano {fora[0]} fora do intervalo" f"{ANO_MIN} -{ANO_MAX}."])
+            fora =[ano for _, ano in colunas_ano if not (ANO_MIN<= ano<=ANO_MAX)]
+            if fora:
+                raise InvalidImport([f"Cabeçalho inválido: ano {fora[0]} fora do intervalo" f"{ANO_MIN} -{ANO_MAX}."])
 
-        ultima_coluna = max( i for i, _ in colunas_ano)
+            ultima_coluna = max( i for i, _ in colunas_ano)
 
-        indicador_atual: Optional[Indicador] = None
+            indicador_atual: Optional[Indicador] = None
 
-        for celulas in leitor:
-            n = leitor.line_num
-            if not any(c.strip() for c in celulas):
-                continue
-
-            nome = celulas[0].strip()
-
-            if nome in UNIDADES_INDICADORES:
-                indicador_atual= Indicador.known(nome)
-                linha =None
-            else:
-                try:
-                    linha=Linha.from_the_code(nome)
-                except InvalidData:
-                    erros.append(f"linha {n}: indicador/linha desconhecido '{nome}'.")
-                    continue
-                if indicador_atual is None:
-                    erros.append( f"linha {n}: {nome} aparece antes de qualquer indicador.")
+            for celulas in leitor:
+                n = leitor.line_num
+                if not any(c.strip() for c in celulas):
                     continue
 
-            if len(celulas) <= ultima_coluna:
-                erros.append(
-                    f"linha {n} ({nome}): faltam colunas "
-                    f"(esperadas {ultima_coluna +1}, encontradas {len(celulas)})."
-                )
-                continue
+                nome = celulas[0].strip()
 
-            for i, ano in colunas_ano:
-                
-                try:
-                    numero= _convert_value(celulas[i])
-                except ValueError:
-                    erros.append(f"linhas {n} ({nome}), {ano}: valor inválido '{celulas[i]}'.")
-                    continue
-                
-                try:
-                    valor =ValorIndicador(indicador_atual,linha, ano, numero)
-                except InvalidData as erro:
-                    erros.append(f"linha {n} ({nome}), {ano}: {erro}")
-                    continue
-                
-                try:
-                    valor= ValorIndicador(indicador_atual, linha, ano, numero)
-                except InvalidData as erro:
-                    erros.append(f"linha {n} ({nome}), {ano}: {erro}")
-                    continue
+                if nome in UNIDADES_INDICADORES:
+                    indicador_atual= Indicador.known(nome)
+                    linha =None
+                else:
+                    m = _RE_LINHA.fullmatch(nome)
+                    if m is None:
+                        erros.append(f"linha {n}: indicador/linha desconhecido '{nome}'.")
+                        continue
+                    linha = Linha(codigo=nome, nome=f"Linha {m.group(1)}")
+                    if indicador_atual is None:
+                        erros.append(
+                            f"linha {n}: '{nome}' aparece antes de qualquer indicador."
+                        )
+                        continue
 
-                if valor.key in vistos:
-                    erros.append( 
-                        f"linha {n}: {indicador_atual.nome} / {nome} / {ano}"
-                        "repetido no ficheirp."
+                if len(celulas) <= ultima_coluna:
+                    erros.append(
+                        f"linha {n} ({nome}): faltam colunas "
+                        f"(esperadas {ultima_coluna +1}, encontradas {len(celulas)})."
                     )
                     continue
-                vistos.add(valor.key)
-                valores.append(valor)
+
+                for i, ano in colunas_ano:
+                    
+                    try:
+                        numero= _convert_value(celulas[i])
+                    except ValueError:
+                        erros.append(f"linhas {n} ({nome}), {ano}: valor inválido '{celulas[i]}'.")
+                        continue
+                    
+                    try:
+                        valor =ValorIndicador(indicador_atual,linha, ano, numero)
+                    except InvalidData as erro:
+                        erros.append(f"linha {n} ({nome}), {ano}: {erro}")
+                        continue
+                    
+                    try:
+                        valor= ValorIndicador(indicador_atual, linha, ano, numero)
+                    except InvalidData as erro:
+                        erros.append(f"linha {n} ({nome}), {ano}: {erro}")
+                        continue
+
+                    if valor.key in vistos:
+                        erros.append( 
+                            f"linha {n}: {indicador_atual.nome} / {nome} / {ano}"
+                            "repetido no ficheirp."
+                        )
+                        continue
+                    vistos.add(valor.key)
+                    valores.append(valor)
+    except UnicodeDecodeError:
+            raise InvalidImport(
+                ["O ficheiro não está codificado em UTF-8. Guarde-o como CSV UTF-8."]
+            )
 
     if erros:
         raise InvalidImport(erros)

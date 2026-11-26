@@ -65,6 +65,9 @@ class Linha:
         object.__setattr__(self, "codigo", codigo)
         object.__setattr__(self, "nome", nome)
 
+
+
+
 @dataclass(frozen=True)
 class Indicador:
     nome: str
