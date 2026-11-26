@@ -8,7 +8,7 @@ from fastapi.staticfiles import StaticFiles
 from metro_em_numeros.config import obter_caminho_bd, obter_caminho_fatores
 from metro_em_numeros.database import initialize
 from metro_em_numeros.web.indicadores import router
-from metro_em_numeros.web import  indicadores, linhas, modos, analise
+from metro_em_numeros.web import  indicadores, linhas, modos, analise, impacto,importar
 
 BASE_DIR = Path(__file__).resolve().parent
 
@@ -27,6 +27,6 @@ def create_app() -> FastAPI:
         StaticFiles(directory=str(BASE_DIR / "static")),
         name="static",
     )
-    for modulo in (indicadores, linhas, modos, analise):
+    for modulo in (indicadores, linhas, modos,analise, impacto,importar):
         app.include_router(modulo.router)
     return app

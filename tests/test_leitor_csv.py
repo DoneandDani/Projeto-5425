@@ -74,10 +74,10 @@ def test_ficheiro_inexistente(tmp_path):
     with pytest.raises(FileNotFoundError):
         read_csv(tmp_path / "nao_existe.csv")
 
-def test_codigo_de_linha_fora_do_formato_do_csv(escrever_csv):
+def test_codigo_de_linha_fora_do_formato_do_csv(write_csv):
     mau = "Indicador (10^3),2024\r\nPassageiros,1\r\nMP - H,1\r\n"
     with pytest.raises(InvalidImport, match="desconhecido 'MP - H'"):
-        read_csv(escrever_csv(mau))
+        read_csv(write_csv(mau))
 
 
 def test_ficheiro_que_nao_e_utf8(tmp_path):

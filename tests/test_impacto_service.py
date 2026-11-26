@@ -23,8 +23,8 @@ def linha_do_ano(resultado, ano):
     return next(l for l in resultado["linhas"] if l["ano"] == ano)
 
 
-def test_balanco_com_fatores_ficticios(conn_com_dados, fatores_ficticios):
-    resultado = ImpactoService(conn_com_dados, fatores_ficticios).estimate(100)
+def test_balanco_com_fatores_ficticios(conn_with_data, fatores_ficticios):
+    resultado = ImpactoService(conn_with_data, fatores_ficticios).estimate(100)
     assert resultado["disponivel"]
     pkm = 477564.1 * 1000  # passageiros-km do total, 2024
     metro_t = pkm * 10 / 1e6
@@ -36,27 +36,27 @@ def test_balanco_com_fatores_ficticios(conn_com_dados, fatores_ficticios):
     assert [l["ano"] for l in resultado["linhas"]] == list(range(2016, 2025))
 
 
-def test_com_desvio_zero_o_balanco_e_negativo(conn_com_dados, fatores_ficticios):
-    resultado = ImpactoService(conn_com_dados, fatores_ficticios).estimate(0)
+def test_com_desvio_zero_o_balanco_e_negativo(conn_with_data, fatores_ficticios):
+    resultado = ImpactoService(conn_with_data, fatores_ficticios).estimate(0)
     assert linha_do_ano(resultado, 2024)["alternativa_t"] == "0"
     assert linha_do_ano(resultado, 2024)["balanco_t"].startswith("-")
 
 
 @pytest.mark.parametrize("desvio", [-1, 101, float("nan")])
-def test_desvio_invalido(conn_com_dados, fatores_ficticios, desvio):
+def test_desvio_invalido(conn_with_data, fatores_ficticios, desvio):
     with pytest.raises(InvalidData):
-        ImpactoService(conn_com_dados, fatores_ficticios).estimate(desvio)
+        ImpactoService(conn_with_data, fatores_ficticios).estimate(desvio)
 
 
-def test_sem_ficheiro_de_fatores(conn_com_dados, tmp_path):
-    resultado = ImpactoService(conn_com_dados, tmp_path / "nao_existe.csv").estimate()
+def test_sem_ficheiro_de_fatores(conn_with_data, tmp_path):
+    resultado = ImpactoService(conn_with_data, tmp_path / "nao_existe.csv").estimate()
     assert not resultado["disponivel"]
     assert "Não foi encontrado" in resultado["mensagens"][0]
 
 
-def test_fatores_por_preencher_nao_calcula(conn_com_dados, csv_real):
+def test_fatores_por_preencher_nao_calcula(conn_with_data, csv_real):
     ficheiro = csv_real.parent / "fatores_emissao.csv"  # o do projeto, sem valores
-    resultado = ImpactoService(conn_com_dados, ficheiro).estimate()
+    resultado = ImpactoService(conn_with_data, ficheiro).estimate()
     assert not resultado["disponivel"]
     assert "carro" in resultado["mensagens"][0] and "comboio" in resultado["mensagens"][0]
     assert resultado["linhas"] == []

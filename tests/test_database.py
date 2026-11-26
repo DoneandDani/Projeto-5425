@@ -31,7 +31,7 @@ def preparar_base(conn):
             "VALUES ('teste.csv', 'abc', 'teste', 0)"
         )
         conn.execute(
-            "INSERT INTO indicador (nome, unidade) VALUES ('Passageiros', '10³ passageiros')"
+            "INSERT INTO indicador (nome, unidade) VALUES ('Passageiros', '10^3 passageiros')"
         )
 
 

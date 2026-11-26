@@ -22,7 +22,7 @@ class LinhaService:
         self.modos = ModoRepository(conn)
 
     def list_linhas(self) -> List[Linha]:
-        return self.linhas.l()
+        return self.linhas.show_list()
 
     def list_modes(self) -> List[ModoTransporte]:
         return self.modos.show_list()

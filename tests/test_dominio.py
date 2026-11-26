@@ -50,7 +50,7 @@ def test_modo_invalido(nome, descricao):
 
 # ---- Indicador ----
 def test_indicador_conhecido_tem_unidade():
-    assert Indicador.known("Passageiros").unidade == "10³ passageiros"
+    assert Indicador.known("Passageiros").unidade == "10^3 passageiros"
 
 
 def test_indicador_desconhecido():

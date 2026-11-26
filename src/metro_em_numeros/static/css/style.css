@@ -28,6 +28,7 @@ tr.total th, tr.total td { background: #f4f4f4; font-weight: bold; }
 .meta, .nota { color: #555; font-size: 0.9rem; }
 .aviso { background: #fff7e0; border: 1px solid #e6c866; padding: 12px; }
 
+/* navegação, formulários e mensagens */
 nav a { margin-right: 14px; }
 form div { margin-bottom: 16px; }
 label { display: block; margin-bottom: 4px; }

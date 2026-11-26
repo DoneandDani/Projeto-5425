@@ -36,19 +36,19 @@ def test_com_dados(conn, csv_real):
     ]
     html = renderizar(contexto)
     assert "35\u00a0069,0" in html      # Passageiros, MP - D, 2024
-    assert "10³ passageiros" in html
+    assert "10^3 passageiros" in html
     assert "Total (rede)" in html
     assert "—" in html                  # linha G sem dados
 
 
-def test_os_dados_persistem_apos_reabrir(caminho_bd, csv_real):
-    with_conn = connect(caminho_bd)
+def test_os_dados_persistem_apos_reabrir(path_db, csv_real):
+    with_conn = connect(path_db)
     try:
         ImportacaoService(with_conn).import_file(csv_real)
     finally:
         with_conn.close()
     # "reiniciar": nova ligação, como num novo arranque da aplicação
-    nova = connect(caminho_bd)
+    nova = connect(path_db)
     try:
         assert len(ConsultaService(nova).get_tables()["tabelas"]) == 6
     finally:
@@ -69,8 +69,8 @@ def test_formatar_com_casas_decimais():
     assert format_value(-1234.5, 1) == "-1\u00a0234,5"
 
 
-def test_analise_so_tem_series_derivadas(conn_com_dados):
-    contexto = ConsultaService(conn_com_dados).get_analysis()
+def test_analise_so_tem_series_derivadas(conn_with_data):
+    contexto = ConsultaService(conn_with_data).get_analysis()
     titulos = [t["indicador"] for t in contexto["tabelas"]]
     assert "Taxa de ocupação" in titulos
     assert "Passageiros" not in titulos
@@ -78,8 +78,8 @@ def test_analise_so_tem_series_derivadas(conn_com_dados):
     assert "Taxa de ocupação" in html
 
 
-def test_opcoes_de_graficos(conn_com_dados):
-    opcoes = ConsultaService(conn_com_dados).options_graphs()
+def test_opcoes_de_graficos(conn_with_data):
+    opcoes = ConsultaService(conn_with_data).options_graphs()
     chaves = [o["chave"] for o in opcoes]
     assert chaves[:6] == ["comboios", "comboios-km", "investimento",
                           "lugares-km", "passageiros", "passageiros-km"]

@@ -1,32 +1,31 @@
 
 {% extends "base.html" %}
-{% import "_tabela.html" as comp %}
 {% block conteudo %}
-<h2>Metro do Porto: rede, oferta e procura</h2>
+<h2>Gráficos</h2>
 
-{% if not tabelas %}
+{% if not opcoes %}
 <p class="aviso">
-  Ainda não existem dados importados.
-  Use <a href="/importar">Importar dados</a> ou execute
-  <code>python scripts/importar_csv.py</code> e recarregue a página.
+  Ainda não existem dados importados. Use
+  <a href="/importar">Importar dados</a> e recarregue a página.
 </p>
 {% else %}
-<p class="meta">
-  Período: {{ periodo }} ·
-  Valores em milhares (10³), salvo indicação em contrário ·
-  Fonte: {{ ultima_importacao.fonte }} ·
-  Ficheiro: {{ ultima_importacao.nome_ficheiro }}
-  (importado em {{ ultima_importacao.data_importacao }} UTC)
-</p>
-
-{% for t in tabelas %}
-{{ comp.tabela(t) }}
-{% endfor %}
-
+<div>
+  <label for="serie">Indicador</label>
+  <select id="serie">
+    {% for o in opcoes %}
+    <option value="{{ o.chave }}">{{ o.titulo }}{% if o.derivada %} (calculado){% endif %}</option>
+    {% endfor %}
+  </select>
+</div>
+<p id="aviso-grafico" class="meta"></p>
+<div class="grafico">
+  <canvas id="grafico" role="img" aria-label="Gráfico de linhas por ano"></canvas>
+</div>
 <p class="nota">
-  «—» significa que a fonte não tem dados (não é o mesmo que zero).
-  O total da rede é o valor publicado na fonte e pode não coincidir com a
-  soma das linhas (por exemplo, o Investimento exclui a linha G).
+  Clique numa linha da legenda para a esconder ou mostrar. As falhas na linha
+  correspondem a anos sem dados na fonte.
 </p>
+<script src="{{ url_for('static', path='/js/chart.umd.min.js') }}"></script>
+<script src="{{ url_for('static', path='/js/graficos.js') }}"></script>
 {% endif %}
 {% endblock %}
