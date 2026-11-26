@@ -1,0 +1,27 @@
+
+{% macro tabela(t) %}
+<div class="tabela-wrap">
+  <table>
+    <caption>{{ t.indicador }} <small>({{ t.unidade }})</small></caption>
+    <thead>
+      <tr>
+        <th scope="col">Linha</th>
+        {% for ano in t.anos %}
+        <th scope="col" class="num">{{ ano }}</th>
+        {% endfor %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for l in t.linhas %}
+      <tr{% if l.e_total %} class="total"{% endif %}>
+        <th scope="row">{{ l.nome }}</th>
+        {% for v in l.valores %}
+        <td class="num">{{ v }}</td>
+        {% endfor %}
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% if t.nota %}<p class="nota">{{ t.nota }}</p>{% endif %}
+</div>
+{% endmacro %}

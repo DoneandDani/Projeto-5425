@@ -1,0 +1,23 @@
+
+{% extends "base.html" %}
+{% import "_tabela.html" as comp %}
+{% block conteudo %}
+<h2>Indicadores calculados</h2>
+
+{% if not tabelas %}
+<p class="aviso">
+  Ainda não existem dados importados. Use
+  <a href="/importar">Importar dados</a> e recarregue a página.
+</p>
+{% else %}
+<p class="meta">
+  Período: {{ periodo }} · Calculado a partir dos valores publicados na fonte
+  ({{ ultima_importacao.fonte }}). «—» indica que falta um valor ou que a
+  divisão não é possível.
+</p>
+
+{% for t in tabelas %}
+{{ comp.tabela(t) }}
+{% endfor %}
+{% endif %}
+{% endblock %}

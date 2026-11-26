@@ -1,63 +1,64 @@
 
 
+"""Prepara os dados para as páginas"""
+
+
 from __future__ import annotations
 
 import sqlite3
-from typing import Optional
 
+from metro_em_numeros.domain.series import Serie
 from metro_em_numeros.repositories.importacao_repository import ImportacaoRepository
-from metro_em_numeros.repositories.valor_repository import ValorRepository
+from metro_em_numeros.services.formatacao import format_value
+from metro_em_numeros.services.series_service import SeriesService
 
-SEM_DADOS = "-"
-NOME_TOTAL = "Total (rede)"
 
-def value_formating(valor: Optional[float]) -> str:
-    """Formatar os dados para serem mais legíveis e passar None -> '-' """
-    if valor is None:
-        return SEM_DADOS
-    texto = f"{valor:,.1f}"
-    return texto.replace(",", "\u00a0").replace(".", ",")
+def _for_table(serie: Serie) -> dict:
+    return {
+        "indicador": serie.titulo,
+        "unidade": serie.unidade,
+        "nota": serie.nota,
+        "anos": serie.anos,
+        "linhas": [
+            {
+                "nome": linha.nome,
+                "e_total": linha.e_total,
+                "valores": [format_value(v, serie.casas) for v in linha.valores],
+            }
+            for linha in serie.linhas
+        ],
+    }
+
 
 class ConsultaService:
     def __init__(self, conn: sqlite3.Connection):
-        self.valores= ValorRepository(conn)
+        self.series = SeriesService(conn)
         self.importacoes = ImportacaoRepository(conn)
 
-    def get_tables(self) ->dict:
-        valores =self.valores.listing()
-        ultima =self.importacoes.last()
-        
-        if not valores or ultima is None:
-            return {"tabelas" : [], "periodo": None, "ultima_importacao": None}
+    def get_tables(self) -> dict:
+        """Uma tabela por indicador da fonte."""
+        return self._context(derivadas=False)
 
-        por_indicador: dict = {}
-        for  v in valores:
-            grupo = por_indicador.setdefault( v.indicador.nome, {"unidade": v.indicador.unidade, "linhas": {}, "anos": set()},)
-            grupo["anos"].add(v.ano)
-            codigo = v.linha.codigo if v.linha else None
-            grupo["linhas"].setdefault(codigo, {})[v.ano] = v.valor
+    def get_analysis(self) -> dict:
+        """Uma tabela por indicador calculado."""
+        return self._context(derivadas=True)
 
-        todos_os_anos = sorted({v.ano for v in valores})
-        tabelas =[]
-
-        for nome, grupo in por_indicador.items():
-            anos = sorted(grupo["anos"])
-            tabelas.append({
-                "indicador" :nome,
-                "unidade" : grupo["unidade"],
-                "anos" : anos,
-                "linhas" : [
-                    {
-                        "nome" : NOME_TOTAL if codigo is None else codigo,
-                        "e_total": codigo is None,
-                        "valores" : [value_formating(mapa.get(a)) for a in anos],
-                    }
-                    for codigo, mapa in grupo["linhas"].items()
-                ],
-            }) 
-
-        return{
-            "tabelas" : tabelas,
-            "periodo": f"{todos_os_anos[0]} - {todos_os_anos[-1]}",
-            "ultima_importacao" : ultima,
+    def _context(self, derivadas: bool) -> dict:
+        catalogo = self.series.cataloge()
+        ultima = self.importacoes.last()
+        series = [s for s in catalogo.values() if s.derivada == derivadas]
+        if not series or ultima is None:
+            return {"tabelas": [], "periodo": None, "ultima_importacao": None}
+        anos = series[0].anos
+        return {
+            "tabelas": [_for_table(s) for s in series],
+            "periodo": f"{anos[0]}–{anos[-1]}",
+            "ultima_importacao": ultima,
         }
+
+    def options_graphs(self) -> list:
+        """Séries disponíveis para o seletor da página de gráficos."""
+        return [
+            {"chave": s.chave, "titulo": s.titulo, "derivada": s.derivada}
+            for s in self.series.catalog().values()
+        ]

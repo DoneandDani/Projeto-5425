@@ -1,12 +1,13 @@
-
 {% extends "base.html" %}
+{% import "_tabela.html" as comp %}
 {% block conteudo %}
 <h2>Metro do Porto: rede, oferta e procura</h2>
 
 {% if not tabelas %}
 <p class="aviso">
   Ainda não existem dados importados.
-  Execute <code>python scripts/importar_csv.py</code> e recarregue a página.
+  Use <a href="/importar">Importar dados</a> ou execute
+  <code>python scripts/importar_csv.py</code> e recarregue a página.
 </p>
 {% else %}
 <p class="meta">
@@ -18,29 +19,7 @@
 </p>
 
 {% for t in tabelas %}
-<div class="tabela-wrap">
-  <table>
-    <caption>{{ t.indicador }} <small>({{ t.unidade }})</small></caption>
-    <thead>
-      <tr>
-        <th scope="col">Linha</th>
-        {% for ano in t.anos %}
-        <th scope="col" class="num">{{ ano }}</th>
-        {% endfor %}
-      </tr>
-    </thead>
-    <tbody>
-      {% for l in t.linhas %}
-      <tr{% if l.e_total %} class="total"{% endif %}>
-        <th scope="row">{{ l.nome }}</th>
-        {% for v in l.valores %}
-        <td class="num">{{ v }}</td>
-        {% endfor %}
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-</div>
+{{ comp.tabela(t) }}
 {% endfor %}
 
 <p class="nota">
