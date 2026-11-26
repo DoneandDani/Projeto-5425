@@ -68,7 +68,7 @@ def count_lines(conn):
 def conn_with_data(conn, csv_real):
     """Ligação a uma base de dados onde o CSV real já foi importado."""
     
-    ImportacaoService(conn).importar(csv_real)
+    ImportacaoService(conn).import_file(csv_real)
     return conn
 
 

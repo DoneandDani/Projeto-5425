@@ -63,5 +63,5 @@ class LinhaService:
             self.linhas.delete(id_linha)
 
     def _verify_mode(self, id_modo: Optional[int]) -> None:
-        if id_modo is None or self.modos.get_modo(id_modo) is None:
+        if id_modo is None or self.modos.get_mode(id_modo) is None:
             raise InvalidData("Escolha um modo de transporte válido.")

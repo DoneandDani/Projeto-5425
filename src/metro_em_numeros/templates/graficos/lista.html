@@ -1,0 +1,32 @@
+
+{% extends "base.html" %}
+{% import "_tabela.html" as comp %}
+{% block conteudo %}
+<h2>Metro do Porto: rede, oferta e procura</h2>
+
+{% if not tabelas %}
+<p class="aviso">
+  Ainda não existem dados importados.
+  Use <a href="/importar">Importar dados</a> ou execute
+  <code>python scripts/importar_csv.py</code> e recarregue a página.
+</p>
+{% else %}
+<p class="meta">
+  Período: {{ periodo }} ·
+  Valores em milhares (10³), salvo indicação em contrário ·
+  Fonte: {{ ultima_importacao.fonte }} ·
+  Ficheiro: {{ ultima_importacao.nome_ficheiro }}
+  (importado em {{ ultima_importacao.data_importacao }} UTC)
+</p>
+
+{% for t in tabelas %}
+{{ comp.tabela(t) }}
+{% endfor %}
+
+<p class="nota">
+  «—» significa que a fonte não tem dados (não é o mesmo que zero).
+  O total da rede é o valor publicado na fonte e pode não coincidir com a
+  soma das linhas (por exemplo, o Investimento exclui a linha G).
+</p>
+{% endif %}
+{% endblock %}

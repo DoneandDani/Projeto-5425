@@ -30,7 +30,7 @@ def page_graphs(request: Request):
 @router.get("/api/series/{chave}")
 def api_serie(request: Request, chave: str):
     with open_connection(request) as conn:
-        serie = SeriesService(conn).catalogo().get(chave)
+        serie = SeriesService(conn).cataloge().get(chave)
     if serie is None:
         raise HTTPException(status_code=404, detail="Série desconhecida.")
     return serie_for_json(serie)

@@ -16,10 +16,10 @@ class ModoService:
         self.modos = ModoRepository(conn)
 
     def list_modes(self) -> List[ModoTransporte]:
-        return self.modos.listar()
+        return self.modos.show_list()
 
     def get_mode(self, id_modo: int) -> ModoTransporte:
-        modo = self.modos.obter(id_modo)
+        modo = self.modos.get_mode(id_modo)
         if modo is None:
             raise RegistryNotFound("O modo de transporte não existe.")
         return modo
@@ -29,9 +29,9 @@ class ModoService:
         if self.modos.search_by_name(modo.nome) is not None:
             raise DoubleRegistry("Já existe um modo de transporte com este nome.")
         with self.conn:
-            return self.modos.guardar(modo)
+            return self.modos.save(modo)
 
-    def editar_modo(self, id_modo: int, nome: str, descricao: str = "") -> ModoTransporte:
+    def edit_mode(self, id_modo: int, nome: str, descricao: str = "") -> ModoTransporte:
         self.get_mode(id_modo)
         modo = ModoTransporte(id=id_modo, nome=nome, descricao=descricao)
         existente = self.modos.search_by_name(modo.nome)
@@ -40,7 +40,7 @@ class ModoService:
         with self.conn:
             return self.modos.save(modo)
 
-    def eliminar_modo(self, id_modo: int) -> None:
+    def delete_mode(self, id_modo: int) -> None:
         self.get_mode(id_modo)
         total = self.modos.count_lines(id_modo)
         if total:

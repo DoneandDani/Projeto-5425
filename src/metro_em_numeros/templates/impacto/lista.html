@@ -1,0 +1,184 @@
+
+{% extends "base.html" %}
+{% block conteudo %}
+<h2>Impacto ambiental (estimativa)</h2>
+
+{% if erro %}
+<p class="erro" role="alert">{{ erro }}</p>
+{% endif %}
+
+<form method="get" action="/impacto" class="cenario">
+  <label for="desvio">
+    Percentagem dos passageiros-km do metro que, sem o metro, seriam feitos de carro:
+    <output id="valor_desvio">{{ desvio|int }}</output>%
+  </label>
+  <input id="desvio" name="desvio" type="range" min="0" max="100" step="5"
+         value="{{ desvio|int }}"
+         oninput="document.getElementById('valor_desvio').value = this.value">
+  <button type="submit">Calcular</button>
+</form>
+
+{% if not disponivel %}
+  {% for m in mensagens %}
+  <p class="aviso">{{ m }}</p>
+  {% endfor %}
+  {% if not mensagens and not erro %}
+  <p class="aviso">A estimativa não está disponível.</p>
+  {% endif %}
+{% else %}
+<div class="tabela-wrap">
+  <table>
+    <caption>Balanço de emissões por ano <small>(toneladas de CO₂e)</small></caption>
+    <thead>
+      <tr>
+        <th scope="col">Ano</th>
+        <th scope="col" class="num">Passageiros-km (milhões)</th>
+        <th scope="col" class="num">Emissões do metro</th>
+        <th scope="col" class="num">Emissões da alternativa</th>
+        <th scope="col" class="num">Balanço</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for l in linhas %}
+      <tr>
+        <th scope="row">{{ l.ano }}</th>
+        <td class="num">{{ l.milhoes_pkm }}</td>
+        <td class="num">{{ l.metro_t }}</td>
+        <td class="num">{{ l.alternativa_t }}</td>
+        <td class="num">{{ l.balanco_t }}</td>
+      </tr>
+      {% endfor %}
+      <tr class="total">
+        <th scope="row">Total</th>
+        <td></td><td></td><td></td>
+        <td class="num">{{ total_balanco }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+{% endif %}
+
+<h3>Como é calculado</h3>
+<p>
+  Para cada ano, converte-se o total de passageiros-km do metro (em milhares na
+  fonte) em passageiros-km e multiplica-se pelos fatores de emissão:
+</p>
+<ul>
+  <li><strong>Emissões do metro</strong> = passageiros-km × fator do comboio.</li>
+  <li><strong>Emissões da alternativa</strong> = passageiros-km × percentagem escolhida × fator do carro.</li>
+  <li><strong>Balanço</strong> = alternativa − metro. Um valor negativo significa que, neste cenário, o metro emitiria mais do que a alternativa.</li>
+</ul>
+
+<h3>Limitações</h3>
+<ul>
+  <li>Os fatores são médias europeias, não valores específicos do Metro do Porto nem do mix elétrico português.</li>
+  <li>As médias não devem ser usadas para calcular emissões de viagens concretas.</li>
+  <li>Assume-se que os restantes passageiros-km não teriam emissões alternativas (cenário conservador).</li>
+  <li>É uma estimativa simples, para ilustrar ordens de grandeza.</li>
+</ul>
+
+{% if fatores %}
+<h3>Fatores de emissão usados</h3>
+<ul class="fatores">
+  {% for f in fatores %}
+  <li>
+    <strong>{{ f.modo }}</strong>:
+    {% if f.preenchido %}{{ f.g_co2e_por_pkm|string|replace('.', ',') }} g CO₂e por passageiro-km{% else %}por preencher{% endif %}
+    ({{ f.ambito }}, {{ f.ano_referencia }}).
+    Fonte: {{ f.fonte }}{% if f.url %} — <a href="{{ f.url }}">{{ f.url }}</a>{% endif %}
+  </li>
+  {% endfor %}
+</ul>
+{% endif %}
+{% endblock %}{% extends "base.html" %}
+{% block conteudo %}
+<h2>Impacto ambiental (estimativa)</h2>
+
+{% if erro %}
+<p class="erro" role="alert">{{ erro }}</p>
+{% endif %}
+
+<form method="get" action="/impacto" class="cenario">
+  <label for="desvio">
+    Percentagem dos passageiros-km do metro que, sem o metro, seriam feitos de carro:
+    <output id="valor_desvio">{{ desvio|int }}</output>%
+  </label>
+  <input id="desvio" name="desvio" type="range" min="0" max="100" step="5"
+         value="{{ desvio|int }}"
+         oninput="document.getElementById('valor_desvio').value = this.value">
+  <button type="submit">Calcular</button>
+</form>
+
+{% if not disponivel %}
+  {% for m in mensagens %}
+  <p class="aviso">{{ m }}</p>
+  {% endfor %}
+  {% if not mensagens and not erro %}
+  <p class="aviso">A estimativa não está disponível.</p>
+  {% endif %}
+{% else %}
+<div class="tabela-wrap">
+  <table>
+    <caption>Balanço de emissões por ano <small>(toneladas de CO₂e)</small></caption>
+    <thead>
+      <tr>
+        <th scope="col">Ano</th>
+        <th scope="col" class="num">Passageiros-km (milhões)</th>
+        <th scope="col" class="num">Emissões do metro</th>
+        <th scope="col" class="num">Emissões da alternativa</th>
+        <th scope="col" class="num">Balanço</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for l in linhas %}
+      <tr>
+        <th scope="row">{{ l.ano }}</th>
+        <td class="num">{{ l.milhoes_pkm }}</td>
+        <td class="num">{{ l.metro_t }}</td>
+        <td class="num">{{ l.alternativa_t }}</td>
+        <td class="num">{{ l.balanco_t }}</td>
+      </tr>
+      {% endfor %}
+      <tr class="total">
+        <th scope="row">Total</th>
+        <td></td><td></td><td></td>
+        <td class="num">{{ total_balanco }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+{% endif %}
+
+<h3>Como é calculado</h3>
+<p>
+  Para cada ano, converte-se o total de passageiros-km do metro (em milhares na
+  fonte) em passageiros-km e multiplica-se pelos fatores de emissão:
+</p>
+<ul>
+  <li><strong>Emissões do metro</strong> = passageiros-km × fator do comboio.</li>
+  <li><strong>Emissões da alternativa</strong> = passageiros-km × percentagem escolhida × fator do carro.</li>
+  <li><strong>Balanço</strong> = alternativa − metro. Um valor negativo significa que, neste cenário, o metro emitiria mais do que a alternativa.</li>
+</ul>
+
+<h3>Limitações</h3>
+<ul>
+  <li>Os fatores são médias europeias, não valores específicos do Metro do Porto nem do mix elétrico português.</li>
+  <li>As médias não devem ser usadas para calcular emissões de viagens concretas.</li>
+  <li>Assume-se que os restantes passageiros-km não teriam emissões alternativas (cenário conservador).</li>
+  <li>É uma estimativa simples, para ilustrar ordens de grandeza.</li>
+</ul>
+
+{% if fatores %}
+<h3>Fatores de emissão usados</h3>
+<ul class="fatores">
+  {% for f in fatores %}
+  <li>
+    <strong>{{ f.modo }}</strong>:
+    {% if f.preenchido %}{{ f.g_co2e_por_pkm|string|replace('.', ',') }} g CO₂e por passageiro-km{% else %}por preencher{% endif %}
+    ({{ f.ambito }}, {{ f.ano_referencia }}).
+    Fonte: {{ f.fonte }}{% if f.url %} — <a href="{{ f.url }}">{{ f.url }}</a>{% endif %}
+  </li>
+  {% endfor %}
+</ul>
+{% endif %}
+{% endblock %}

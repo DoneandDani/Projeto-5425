@@ -1,0 +1,30 @@
+
+{% extends "base.html" %}
+{% block conteudo %}
+<h2>Importar dados</h2>
+<p>
+  Escolha um ficheiro CSV no mesmo formato de
+  <code>data/metro_porto_2016_2024.csv</code> (máximo 2 MB, UTF-8).
+  O mesmo ficheiro não é importado duas vezes e, se houver erros, nada é gravado.
+</p>
+
+{% if tipo == "sucesso" %}
+<p class="sucesso" role="status">{{ mensagens[0] }}</p>
+{% elif tipo == "info" %}
+<p class="aviso" role="status">{{ mensagens[0] }}</p>
+{% elif tipo == "erro" %}
+<div class="erro" role="alert">
+  <ul>
+    {% for m in mensagens %}<li>{{ m }}</li>{% endfor %}
+  </ul>
+</div>
+{% endif %}
+
+<form method="post" action="/importar" enctype="multipart/form-data">
+  <div>
+    <label for="ficheiro">Ficheiro CSV</label>
+    <input id="ficheiro" name="ficheiro" type="file" accept=".csv" required>
+  </div>
+  <button type="submit">Importar</button>
+</form>
+{% endblock %}

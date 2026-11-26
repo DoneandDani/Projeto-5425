@@ -21,7 +21,7 @@ def _formulario(request, servico, titulo, acao, editar=False, codigo="", nome=""
         request=request,
         name="linhas/formulario.html",
         context={"titulo": titulo, "acao": acao, "editar": editar, "codigo": codigo,
-                 "nome": nome, "id_modo": id_modo, "modos": servico.listar_modos(),
+                 "nome": nome, "id_modo": id_modo, "modos": servico.list_modes(),
                  "erro": erro},
         status_code=status_code,
     )
@@ -31,8 +31,8 @@ def _list(request, servico, erro=None, status_code=200):
     return templates.TemplateResponse(
         request=request,
         name="linhas/lista.html",
-        context={"linhas": servico.listar_linhas(),
-                 "nomes_modos": servico.nomes_dos_modos(), "erro": erro},
+        context={"linhas": servico.list_linhas(),
+                 "nomes_modos": servico.name_of_modes(), "erro": erro},
         status_code=status_code,
     )
 

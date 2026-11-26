@@ -72,7 +72,7 @@ def edit_mode(request: Request, id_modo: int,
                 nome: str = Form(""), descricao: str = Form("")):
     with open_connection(request) as conn:
         try:
-            ModoService(conn).editar_modo(id_modo, nome, descricao)
+            ModoService(conn).edit_mode(id_modo, nome, descricao)
         except RegistryNotFound as erro:
             raise HTTPException(status_code=404, detail=str(erro))
         except ERROS_PREVISTOS as erro:

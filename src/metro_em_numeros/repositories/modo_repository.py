@@ -25,7 +25,7 @@ class ModoRepository:
         ).fetchall()
         return [_for_object(l) for l in linhas]
 
-    def get_modo(self, id_modo: int) -> Optional[ModoTransporte]:
+    def get_mode(self, id_modo: int) -> Optional[ModoTransporte]:
         linha = self.conn.execute(
             "SELECT id_modo, nome, descricao FROM modo_transporte WHERE id_modo = ?",
             (id_modo,),

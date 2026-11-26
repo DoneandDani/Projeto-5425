@@ -60,5 +60,5 @@ class ConsultaService:
         """Séries disponíveis para o seletor da página de gráficos."""
         return [
             {"chave": s.chave, "titulo": s.titulo, "derivada": s.derivada}
-            for s in self.series.catalog().values()
+            for s in self.series.cataloge().values()
         ]
