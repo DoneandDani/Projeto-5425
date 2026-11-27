@@ -13,11 +13,14 @@ A ideia para este projeto surge da constatação da enorme lacuna de recursos in
 ```bat
 python -m venv .venv
 .venv\Scripts\activate
-pip install -r requirements-dev.txt
+python -m pip install -e ".[dev]"
 
 :: Cria a estrutura para base de dados a partir de sql\schema.sql (não apaga dados)
-python -m scripts.init_db
 
+python scripts/init_db.py          # prepara a base de dados (não apaga dados)
+python scripts/importar_csv.py     # importa data/metro_porto_2016_2024.csv
+
+python -m uvicorn metro_em_numeros.main:criar_app --factory --reload
 
 
 ## Estrutura
